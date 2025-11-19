@@ -31,10 +31,39 @@
 </template>
 
 <script>
+import { ref } from 'vue'
+import apiService from '@/services/api'
+
 export default {
   name: 'HelloWorld',
   props: {
     msg: String
+  },
+  setup() {
+    const userData = ref(null)
+    const loading = ref(false)
+    const error = ref(null)
+
+    const fetchUserProfile = async () => {
+      loading.value = true
+      try {
+        const response = await apiService.getUserProfile()
+        userData.value = response.data
+        error.value = null
+      } catch (err) {
+        error.value = err.message
+        console.error('Error fetching user profile:', err)
+      } finally {
+        loading.value = false
+      }
+    }
+
+    return {
+      userData,
+      loading,
+      error,
+      fetchUserProfile
+    }
   }
 }
 </script>
